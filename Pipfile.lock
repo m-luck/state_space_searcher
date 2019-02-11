@@ -18,11 +18,10 @@
     "default": {
         "anytree": {
             "hashes": [
-                "sha256:409ccb966d759952648d5e5656bc311ab63a1f4a7d5ed9fc0e9715343ca2aa74",
-                "sha256:4de1010295b47a607a2a0cde6417f6f1b412225654f6606d6d4f5385b5b4c10a"
+                "sha256:a221b6a603c3a5d5e417894dc48eaa8b1eab04056e1f5bb509bcfff0e7a47883"
             ],
             "index": "pypi",
-            "version": "==2.5.0"
+            "version": "==2.6.0"
         },
         "six": {
             "hashes": [
