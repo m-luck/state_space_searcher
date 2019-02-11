@@ -147,6 +147,9 @@ for pre, fill, node in RenderTree(root):
         children[node.parent].append(node)
 print("Total nodes:",count)
 
+searchInd = 0
+searchRoot = Node(name=searchInd, value=state)
+previousNode = None
 def search(method=0, question=0):
     dfsOrbfs = method
     timeOrTarget = question
@@ -154,12 +157,18 @@ def search(method=0, question=0):
     global children
     global D
     global S
+    global searchTree
+    global searchInd
+    global previousNode
     traversed = []
     stack = [root]
     found = False
     answer = None
     while stack and found == False:
         cur_node = stack[0]
+        traversedNode = Node(name = searchInd, value=cur_node, parent=previousNode)
+        searchInd += 1
+        previousNode = traversedNode
         stack = stack[1:]
         traversed.append(cur_node)
         # print(cur_node)
@@ -191,9 +200,30 @@ def search(method=0, question=0):
     while cur_node.parent:
         print(cur_node.parent,"\n")
         cur_node = cur_node.parent
+    return traversed
 
+def printTree(nodesToBePrinted):
+    count = 0
+    nodeNames = []
+    for node in nodesToBePrinted:
+        nodeNames.append(node.name)
+    for pre, fill, node in RenderTree(root):
+        if node.name in nodeNames:
+            print("{0}NODE {1}\n{0}Waitlist: {2}\n{0}Runlist: {3}\n{0}Start: {4}\n{0}Earliest: {5}\n{0}Latest: {6}\n{0}Value: {7}".format(pre, node.name, node.value['waitlist'], node.value['runlist'], node.value['start'], node.value['earliestFinish'], node.value['latestFinish'], node.value['value'],node.value['IfFinal']))
+            count += 1
+    print(count)
+print("DFSTime")
+traversed = search(0,0) # dfs time
+printTree(traversed)
 
-search(0,0) # dfs time
-# search(1,0) # bfs time
-# search(0,1) # dfs target
-# search(1,1) # bfs target
+print("BFSTime")
+traversed = search(1,0) # bfs time
+printTree(traversed)
+
+print("DFSTarget")
+traversed = search(0,1) # dfs target
+printTree(traversed)
+
+print("BFSTarget")
+traversed = search(1,1) # bfs target
+printTree(traversed)
