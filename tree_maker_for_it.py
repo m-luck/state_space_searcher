@@ -1,6 +1,6 @@
 from anytree import Node, RenderTree
 # Author: Michael Lukiman. After reading Chang et al. (1994)
-includeRedundantPermutations = False # if permutation found, cut path short
+includeRedundantPermutations = True # if permutation found, cut path short
 includeEmptyProcessorBranch = False # not in production
 sortedHeuristic = False # have the best processors tackle the largest tasks first
 # =========== A. STATE representation
@@ -12,21 +12,29 @@ startTime = 0
 currentTime = 0
 value = 0
 # =========== B. START state
-processors = [2,3] # speed
-tasks = [12,42,48,54] # compute time required
+processors = [] # speed
+tasks = [] # compute time required
 max_val = 0
-for task in tasks:
-    max_val += task
 ind = 0
 taskInd = 0 # to enumerate task IDs at init
 seenPermutations = {}
-for task in tasks:
-    waitlist.append({'index':taskInd, 'computeTime':task})
-    taskInd += 1
-if sortedHeuristic == True:
-    processors = sorted(processors)
-    waitlist = sorted(waitlist, key= lambda x: x['computeTime'])
 state = {'waitlist':waitlist,'runlist':running,'start':startTime,'earliestFinish':earliestFinishTime,'latestFinish':finalFinishTime, 'value':value, 'IfFinal': value, 'procs': [*processors]} # Clear and effective to be nodes in a tree. Uses unpacking to make sure each state does not refer to the same frozen list.
+def initialize(tasksIn, procsIn):
+    global root, generateList, max_val, waitlist, processors, taskInd, tasks, processors, state
+    processors = procsIn
+    tasks = tasksIn
+    # print(tasks)
+    for task in tasks:
+        max_val += task
+    for task in tasks:
+        waitlist.append({'index':taskInd, 'computeTime':task})
+        taskInd += 1
+    if sortedHeuristic == True:
+        processors = sorted(processors)
+        waitlist = sorted(waitlist, key= lambda x: x['computeTime'])
+    state = {'waitlist':waitlist,'runlist':running,'start':startTime,'earliestFinish':earliestFinishTime,'latestFinish':finalFinishTime, 'value':value, 'IfFinal': value, 'procs': [*processors]} # Clear and effective to be nodes in a tree. Uses unpacking to make sure each state does not refer to the same frozen list.
+    root = Node(name=0,value=state)
+    generateList = [root] # This will be in the form of queue, removing the first element at a time
 root = Node(name=0,value=state)
 # That concludes the initialization.
 # =========== C. SUCCESSOR states (Operator logic)
@@ -64,6 +72,7 @@ def generateChildren():
             currentTime = 0
         if includeEmptyProcessorBranch == True and len(state['waitlist']) > 0:
             state['waitlist'].append('deactivated')
+        print()
         for task in state['waitlist']: # We want to permute assigning one waiting task from the waitlist to this processor
             save_waitlist = [*state['waitlist']] # make a new list with identical elements, so they are independent
             save_waitlist.remove(task) # Since it is about to be assigned to the runlist, it is no longer on the waitlist
@@ -105,7 +114,7 @@ def generateChildren():
                     maxMinus += item['computeTime']
                 newValue = max_val - maxMinus
                 save_state = { 'waitlist':save_waitlist,'runlist':save_runlist,'start':currentTime,'earliestFinish':earliestFinishTime,'latestFinish':finalFinishTime, 'value': newValue, 'IfFinal':oldValue+addValue+addFinalValue, 'procs': save_procs}
-                if includeRedundantPermutations == True:
+                if includeRedundantPermutations == False:
                     permutation_full = sorted(save_runlist, key=lambda x: x['task'])
                     permutation_tasks = []
                     for item in permutation_full:
@@ -128,7 +137,6 @@ def generateChildren():
                     generateList.append(new_node) # Adding this to the generateList, because we will eventually find the children of this node (breadth-first)
     if len(generateList) > 0: # while there are states to generate, recursively generate them
         generateChildren()
-generateChildren()
 
 # =========== D. GOAL
 # State with empty waitlist, empty runlist, and completion time < D
@@ -138,14 +146,16 @@ Ds = 25
 S = 110 # Goal to get at least this high of a value within time D
 count = 0
 children = {}
-for pre, fill, node in RenderTree(root):
-    # print("{0}NODE {1}\n{0}Waitlist: {2}\n{0}Runlist: {3}\n{0}Start: {4}\n{0}Earliest: {5}\n{0}Latest: {6}\n{0}Value: {7}".format(pre, node.name, node.value['waitlist'], node.value['runlist'], node.value['start'], node.value['earliestFinish'], node.value['latestFinish'], node.value['value'],node.value['IfFinal']))
-    count += 1
-    if node.parent in children:
-        children[node.parent].append(node)
-    else:
-        children[node.parent] = []
-        children[node.parent].append(node)
+def printFullTree():
+    count = 0
+    for pre, fill, node in RenderTree(root):
+        # print("{0}NODE {1}\n{0}Waitlist: {2}\n{0}Runlist: {3}\n{0}Start: {4}\n{0}Earliest: {5}\n{0}Latest: {6}\n{0}Value: {7}".format(pre, node.name, node.value['waitlist'], node.value['runlist'], node.value['start'], node.value['earliestFinish'], node.value['latestFinish'], node.value['value'],node.value['IfFinal']))
+        count += 1
+        if node.parent in children:
+            children[node.parent].append(node)
+        else:
+            children[node.parent] = []
+            children[node.parent].append(node)
 # print("Total nodes:",count)
 
 searchInd = 0
@@ -208,9 +218,10 @@ def printTree(nodesToBePrinted):
     nodeNames = []
     for node in nodesToBePrinted:
         nodeNames.append(node.name)
+        # print(node.name)
     for pre, fill, node in RenderTree(root):
         if node.name in nodeNames:
-            # print("{0}NODE {1}\n{0}Waitlist: {2}\n{0}Runlist: {3}\n{0}Start: {4}\n{0}Earliest: {5}\n{0}Latest: {6}\n{0}Value: {7}".format(pre, node.name, node.value['waitlist'], node.value['runlist'], node.value['start'], node.value['earliestFinish'], node.value['latestFinish'], node.value['value'],node.value['IfFinal']))
+            print("{0}NODE {1}\n{0}Waitlist: {2}\n{0}Runlist: {3}\n{0}Start: {4}\n{0}Earliest: {5}\n{0}Latest: {6}\n{0}Value: {7}".format(pre, node.name, node.value['waitlist'], node.value['runlist'], node.value['start'], node.value['earliestFinish'], node.value['latestFinish'], node.value['value'],node.value['IfFinal']))
             count += 1
     # print(count)
 # print("DFSTime")
@@ -228,3 +239,50 @@ def printTree(nodesToBePrinted):
 # print("BFSTarget")
 # traversed = search(1,1) # bfs target
 # printTree(traversed)
+def search(depth, method, root, searchInd, previousNode, Ds, S, children):
+    traversed = []
+    stack = [root]
+    found = False
+    answer = None
+    while stack and found == False:
+        cur_node = stack[0]
+        traversedNode = Node(name = searchInd, value=cur_node, parent=previousNode)
+        searchInd += 1
+        previousNode = traversedNode
+        stack = stack[1:]
+        traversed.append(cur_node)
+        # print(cur_node)
+        if cur_node in children:
+            if method == 'DFS':
+                for child in children[cur_node]:
+                    stack.insert(0, child)
+            elif method == 'BFS':
+                for child in children[cur_node]:
+                    stack.append(child)
+        done = 'False'
+        if len(cur_node.value['waitlist']) == 0:
+            done = 'True'
+        # print("Latest Finish",cur_node.value['latestFinish'],"| Done:", done, "| Final Value:", cur_node.value['value'])
+        # if done == 'True' and cur_node.value['latestFinish'] < D and timeOrTarget == 0:
+            # found = True
+            # answer=cur_node
+        # elif cur_node.value['latestFinish'] < Ds and cur_node.value['value'] > S and timeOrTarget == 1:
+        if cur_node.value['latestFinish'] < Ds and cur_node.value['value'] > S:
+            found = True
+            answer=cur_node
+    count = 0
+    for node in traversed:
+        # print(node.name)
+        count += 1
+    # print("Total traversed:", count)
+    # print("Path:")
+    # cur_node = answer
+    # print(cur_node,"\n")
+    # while cur_node.parent:
+        # print(cur_node.parent,"\n")
+        # cur_node = cur_node.parent
+    return traversed
+def DFS(depth, root, searchInd, previousNode, Ds, S, children):
+    return search(depth, 'DFS', root, searchInd, previousNode, Ds,S, children)
+def BFS(depth, root, searchInd, previousNode, Ds, S, children):
+    return search(depth, 'BFS', root, searchInd, previousNode, Ds, S, children)
