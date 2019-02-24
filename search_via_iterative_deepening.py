@@ -3,6 +3,31 @@ import component_ingestInput as ingester# Import internal modules. [IO handler]
 import component_search as searcher # [search handler]
 import component_stateOperators as transitioner # [handles transitioning from one state to another]
 import component_stateRepresentation as states# [state handler]
+def printNodeTree(start_node):  
+    for pre, fill, node in tree.RenderTree(start_node):
+        print("{pre}ID:{id} Parent:{stateparent} Depth: {depth} Time: {start}\n\
+        {pre} RunningT: {task_run}\n\
+        {pre} RunningP: {proc_run}\n\
+        {pre} Waitlist: {waitlist}\n\
+        {pre} Procs Avail: {proc_avail}\n\
+        {pre} Tasks Done: {task_done}\n\
+        {pre} Children: {children}\n".format(pre=pre, id=node.name, parent=node.parent, 
+            waitlist=node.value[0],
+            task_run=node.value[1],
+            proc_run=node.value[2],
+            task_done=node.value[3],
+            proc_avail=node.value[4],
+            start=node.value[5],
+            depth=node.value[6],
+            stateparent=node.value[7],
+            children=node.value[8],
+            stateid=node.value[9]))
+def nodify(nodes, children, ind, parent):
+    for child in children[ind]:
+        prnt = tree.Node(name=nodes[child][9],value=nodes[child],parent=parent)
+        if child in children:
+            if len(children[child])>0:
+                nodify(nodes, children, nodes[child][9], prnt)
 T = []
 P = []
 D = -1
@@ -46,34 +71,23 @@ start_node = tree.Node(name=node_idx,value=[*start_state])
 if step_by_step: print("Step #2 Starting state",start_state,"initialized.")
 # OPERATE =============================================
 Q, qval = searcher.findQ(T,S,debug)
+Q += len(P) + 1 # Due to having to fill up the processors first.
 assert qval>S, "No solution." # Since findQ assumes sorted, we check that the logic does produce a qval that does surpass or match S. Else there is no answer and we return no solution. 
 if step_by_step: print("Step #3 Starting depth Q ({Q}) found.".format(Q=Q))
-discovered_tree = searcher.iterative(start_state, D, S, Q, T, P, debug)
-while len(discovered_tree)>0:
-    state = discovered_tree[0]
-    del discovered_tree[0]
-    if state[9] == 0:
-        if debug: print('This is the root.')
-    elif state[7] == 0:
-        new = tree.Node(name=state[9], value=state, parent=start_node)
-        parent = new
-    else:
-        tree.Node(name=state[9], value=state, parent=parent)
-        
-
-for pre, fill, node in tree.RenderTree(start_node):
-    print("{pre}ID:{id} Parent:{parent} Depth: {depth} Time: {start}\n\
-    {pre} RunningT: {task_run}\n\
-    {pre} RunningP: {proc_run}\n\
-    {pre} Waitlist: {waitlist}\n\
-    {pre} Procs Avail: {proc_avail}".format(pre=pre, id=node.name, parent=node.parent, 
-        waitlist=node.value[0],
-        task_run=node.value[1],
-        proc_run=node.value[2],
-        task_done=node.value[3],
-        proc_avail=node.value[4],
-        start=node.value[5],
-        depth=node.value[6],
-        stateparent=node.value[7],
-        children=node.value[8],
-        stateid=node.value[9]))
+discovered, nope = searcher.iterative(start_state, D, S, Q, T, P, debug)
+discovered_dict = {}
+parent = start_node
+children = {}
+for state in discovered:
+    discovered_dict[state[9]] = state
+    print(state[9],state)
+    if state[7] in children:
+        children[state[7]].append(state[9])
+    else: 
+        children[state[7]] = []
+        children[state[7]].append(state[9])
+for child in children:
+    print(child, children[child])
+for child in children:
+    nodify(discovered_dict,children,child,parent)
+printNodeTree(start_node)

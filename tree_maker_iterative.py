@@ -197,11 +197,13 @@ def search(method=0, question=0):
     # print("Total traversed:", count)
     # print("Path:")
     cur_node = answer
-    print(cur_node,"\n")
+    print(cur_node.value['runlist'][-1]['proc'])
+    # print(cur_node,"\n")
     while cur_node.parent:
-        print(cur_node.parent,"\n")
+        # print(cur_node.parent,"\n")
+        print(cur_node.value['runlist'][-1]['proc'])
         cur_node = cur_node.parent
-    return traversed
+    return traversed, answer
 
 def printTree(nodesToBePrinted):
     count = 0
@@ -213,18 +215,4 @@ def printTree(nodesToBePrinted):
             # print("{0}NODE {1}\n{0}Waitlist: {2}\n{0}Runlist: {3}\n{0}Start: {4}\n{0}Earliest: {5}\n{0}Latest: {6}\n{0}Value: {7}".format(pre, node.name, node.value['waitlist'], node.value['runlist'], node.value['start'], node.value['earliestFinish'], node.value['latestFinish'], node.value['value'],node.value['IfFinal']))
             count += 1
     # print(count)
-print("DFSTime")
-traversed = search(0,0) # dfs time
-# printTree(traversed)
-
-print("BFSTime")
-traversed = search(1,0) # bfs time
-# printTree(traversed)
-
-print("DFSTarget")
 traversed = search(0,1) # dfs target
-# printTree(traversed)
-
-print("BFSTarget")
-traversed = search(1,1) # bfs target
-# printTree(traversed)

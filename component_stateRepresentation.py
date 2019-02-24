@@ -47,7 +47,7 @@ def check_state(st,T,P,debug):
         if debug: print('Avail procs + running procs not equal.')
     else: 
         return True
-def earliestFinish(st,debug):
+def earliestFinish(st,P,debug):
     '''
     Takes a state and if it has any tasks in its runlist, find the earliest finishing task and return the index of the free processor and task. 
     If there is an empty runlist, return -1.
@@ -61,8 +61,8 @@ def earliestFinish(st,debug):
         finish_times.append(finish_time)
         processors.append(st[2][i])
         tasks.append(st[1][i])
-    if len(finish_times) == 0:
-        if debug: print("Nothing running.")
+    if len(finish_times) < len(P):
+        if debug: print("Still need to fill up our processors.")
         return -1
     earliest = min(finish_times)
     earliestProcessor_idx = -1

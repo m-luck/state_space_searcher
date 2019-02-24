@@ -56,33 +56,32 @@ def shouldGenerate(target_state, D, S, max_depth, debug):
         return True
 def generateChildren(generateList: list, max_depth, D, S, T, P, startInd, debug):
     states_generated = []
+    children = {}
     while len(generateList)>0:
-        if debug: print("New parent state is",generateList[0])
         target_state = generateList[0]
         assert states.check_state(target_state,T,P,debug)==True, "This state is not valid: "+str(target_state)
         del generateList[0]
         if shouldGenerate(target_state, D, S, max_depth, debug):
-            startInd += 1
-            print(target_state)
-            if states.earliestFinish(target_state, debug) == -1:
+            if states.earliestFinish(target_state, P, debug) == -1:
                 time = target_state[6]
                 freeProc = -1
                 freeTask = -1
             else:
-                time, freeProc, freeTask = states.earliestFinish(target_state, debug)
-            new_state = ops.updateState(target_state,time,freeProc,freeTask,target_state[9],startInd,debug)
-            target_state[8].append(startInd) 
-            generateList.insert(0, new_state)
-            if debug: 
-                print("Discovering state:")
-                states.printState(new_state)
-            states_generated.append(new_state)
-    return states_generated
+                time, freeProc, freeTask = states.earliestFinish(target_state,P, debug)
+            new_states, startInd = ops.updateState(target_state,time,freeProc,freeTask,target_state[9],startInd,debug)
+            for new_state in new_states:
+                generateList.insert(0, new_state)
+                states_generated.append(new_state)
+                if target_state[9] not in children:
+                    children[target_state[9]]=[]
+                else:
+                    children[target_state[9]].append(new_state[9]) 
+    return states_generated, children
              
 def iterative(root, D, S, Q, T, P, debug):
     '''
     '''
     generateList = [root]
     if debug: print('Discovering children...')
-    full_tree = generateChildren(generateList, Q, D, S, T, P, 0, debug)
-    return full_tree
+    full_tree, children = generateChildren(generateList, Q, D, S, T, P, 0, debug)
+    return full_tree, children
