@@ -29,7 +29,18 @@ abs_depth = 0
 parent = -1
 children = []
 node_idx = 0 # Will iterate for IDs on new tree nodes. 
-start_state = [[*task_waitlist],[*task_runlist],[*proc_runlist],[*tasks_completed],[*avail_procs], startTime, abs_depth, parent, [*children], node_idx] # A state includes a waitlist, runlist, and a done-list. The runlist is split into tasks running with their corresponding processors.
+start_state = [
+    [*task_waitlist],#0
+    [*task_runlist],#1
+    [*proc_runlist],#2
+    [*tasks_completed],#3
+    [*avail_procs],#4
+    startTime, #5
+    abs_depth, #6
+    parent, #7
+    [*children], #8 
+    node_idx #9
+    ] # A state includes a waitlist, runlist, and a done-list. The runlist is split into tasks running with their corresponding processors.
 assert states.check_state(start_state,T,P,debug) == True, "State is invalid." # Checks if the state is valid.
 start_node = tree.Node(name=node_idx,value=[*start_state])
 if step_by_step: print("Step #2 Starting state",start_state,"initialized.")
@@ -37,4 +48,4 @@ if step_by_step: print("Step #2 Starting state",start_state,"initialized.")
 Q, qval = searcher.findQ(T,S,debug)
 assert qval>S, "No solution." # Since findQ assumes sorted, we check that the logic does produce a qval that does surpass or match S. Else there is no answer and we return no solution. 
 if step_by_step: print("Step #3 Starting depth Q ({Q}) found.".format(Q=Q))
-searcher.iterative(start_state, D, S, Q, debug)
+searcher.iterative(start_state, D, S, Q, T, P, debug)

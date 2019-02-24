@@ -15,17 +15,18 @@ def updateState(st,earlTime,earlProc_idx,earlTask_idx,parent,startInd, debug)->l
         del waitlist[0] # Removes first element from waitlist.
     if debug: print("Readied next task from waitlist.")
     # 5. Done task update.
-    done.append(task_run[earlTask_idx])
-    avail.append(proc_run[earlProc_idx])
-    del task_run[earlTask_idx]
-    del proc_run[earlProc_idx]
-    if debug: print("Removed free processor and task from running, labeled to available and done respectively.")
+    if earlProc_idx != -1 and earlTask_idx != -1:
+        done.append(task_run[earlTask_idx])
+        avail.append(proc_run[earlProc_idx])
+        del task_run[earlTask_idx]
+        del proc_run[earlProc_idx]
+        if debug: print("Removed free processor and task from running, labeled to available and done respectively.")
     # 2. Run task update.
-    task_run.append[up_next]
+    task_run.append(up_next)
     if debug: print("Added task length",up_next,"to running.")
     assert len(avail)>0, "There should be an available processor because we just freed one."
     # 3. Run processor update.
-    proc_run.append[avail[0]]
+    proc_run.append(avail[0])
     if debug: print("Assigned proc speed",avail[0],"to that task.")
     # 4. Available processor update.
     del avail[0]
@@ -33,5 +34,5 @@ def updateState(st,earlTime,earlProc_idx,earlTask_idx,parent,startInd, debug)->l
     # 7. Update depth.
     # 8. Parent.
     if debug: print("New start time is",earlTime)
-    state = [[*waitlist],[*task_run],[*proc_run],[*done],[*avail], earlTime, depth+1, parent, [], startInd] # The spanking new state! It's deterministic!
+    state = [[*waitlist],[*task_run],[*proc_run],[*done],[*avail], earlTime, abs_depth+1, parent, [], startInd] # The spanking new state! It's deterministic!
     return state

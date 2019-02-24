@@ -19,41 +19,67 @@ def findQ(tasks: list, S: int, debug: bool) -> int:
             break  
     return(Qcount, Qthresh)
 def isGoal(target_state: list, D, S, debug):
-    if target_state['time']<D and target_height['value'] >= S:
+    if target_state[5]<D and target_state[6] >= S:
         return True
     else:
         return False
 def timeUp(time, D, debug):
-    return (time >= D)
+    res = False
+    if  (time >= D):
+        if debug: print('Times up!')
+        res = True
+    return res
 def maxDepthReached(depth,max_depth, debug):
-    return (depth >= max_depth)
+    res = False
+    if (depth >= max_depth):
+        if debug: print('Max depth reached.')
+        res = True
+    return res
 def emptyRunList(target_state, debug):
-    return len(target_state[1])==0
+    res = False
+    if len(target_state[1])==0:
+        if debug: print('Empty runlist.')
+        res = True
+    return res
+def emptyWaitList(target_state, debug):
+    res = False
+    if len(target_state[0])==0:
+        if debug: print('Empty waitlist.')
+        res = True
+    return res
 def shouldGenerate(target_state, D, S, max_depth, debug):
     time = target_state[5]
     depth = target_state[6]
-    if isGoal(target_state, D, S, debug) or timeUp(time, D, debug) or maxDepthReached(depth, max_depth, debug) or emptyRunList(target_state, debug):
+    if isGoal(target_state, D, S, debug) or timeUp(time, D, debug) or maxDepthReached(depth, max_depth, debug) or (emptyRunList(target_state, debug) and emptyWaitList(target_state, debug)):
         return False
     else:
         return True
-def generateChildren(generateList: list, max_depth, D, S, startInd, debug):
+def generateChildren(generateList: list, max_depth, D, S, T, P, startInd, debug):
      states_generated = []
      while len(generateList)>0:
+        if debug: print("New parent state is",generateList[0])
         target_state = generateList[0]
         assert states.check_state(target_state,T,P,debug)==True, "This state is not valid: "+str(target_state)
         del generateList[0]
         if shouldGenerate(target_state, D, S, max_depth, debug):
             startInd += 1
-            time, freeProc, freeTask = states.earliestFinish(target_state)
+            print(target_state)
+            if states.earliestFinish(target_state, debug) == -1:
+                time = target_state[6]
+                freeProc = -1
+                freeTask = -1
+            else:
+                time, freeProc, freeTask = states.earliestFinish(target_state, debug)
             new_state = ops.updateState(target_state,time,freeProc,freeTask,target_state,startInd,debug)
-            target_state[7].append(startInd) 
+            target_state[8].append(startInd) 
             generateList.insert(0, new_state)
             if debug: 
                 print("Discovering state:")
-                printState(new_state)
+                states.printState(new_state)
              
-def iterative(root, D, S, Q, debug):
+def iterative(root, D, S, Q, T, P, debug):
     '''
     '''
     generateList = [root]
-    generateChildren(generateList, Q, D, S, 0, debug)
+    if debug: print('Discovering children...')
+    generateChildren(generateList, Q, D, S, T, P, 0, debug)

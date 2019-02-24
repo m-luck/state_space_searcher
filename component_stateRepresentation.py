@@ -40,7 +40,7 @@ def check_state(st,T,P,debug):
     elif len(st[0]) > len(T):
         if debug: print('Count in waitlist is more than all tasks.')
         return False 
-    elif len(st[1]) + len(st[0]) + len(st[2]) != len(T):
+    elif len(st[1]) + len(st[0]) + len(st[3]) != len(T):
         if debug: print('Runlist count + waitlist count + done does not equal all tasks.')
         return False
     elif len(st[2]) + len(st[4]) != len(P):
@@ -56,7 +56,7 @@ def earliestFinish(st,debug):
     processors = []
     tasks = []
     for i in range(0,len(st[2])):
-        finish_time = double(st[1][i])/st[2][i]
+        finish_time = float(st[1][i])/st[2][i]
         if debug: print("Adding",finish_time,"to finish_times.")
         finish_times.append(finish_time)
         processors.append(st[2][i])
@@ -74,7 +74,8 @@ def earliestFinish(st,debug):
             break
     assert earliestProcessor_idx!=-1, "!! Problem with earliest finish."
     assert earliestTask_idx!=-1, "!! Problem with earliest finish."
-    return earliest, earliestProcessor_idx, earliestTask_idx
+    if debug: print("Returning earliest values.")
+    return (earliest, earliestProcessor_idx, earliestTask_idx)
 def getValue(st,debug):
     '''
     Returns the sum of done task lengths.
