@@ -22,12 +22,14 @@ def printNodeTree(start_node):
             stateparent=node.value[7],
             children=node.value[8],
             stateid=node.value[9]))
-def nodify(nodes, children, ind, parent):
-    for child in children[ind]:
-        prnt = tree.Node(name=nodes[child][9],value=nodes[child],parent=parent)
-        if child in children:
-            if len(children[child])>0:
-                nodify(nodes, children, nodes[child][9], prnt)
+def nodify(states, childrenOf, parent_id, parent_obj):
+    for child_id in childrenOf[parent_id]:
+        if debug: print("Looking for state ID", child_id)
+        assert states[child_id][9] == child_id, "These IDs don't match."
+        new_parent_obj = tree.Node(name=child_id,value=states[child_id],parent=parent_obj)
+        new_parent_id = child_id
+        if child_id in childrenOf and len(childrenOf[child_id])>0:
+            nodify(states, childrenOf, new_parent_id, new_parent_obj)
 T = []
 P = []
 D = -1
@@ -74,20 +76,11 @@ Q, qval = searcher.findQ(T,S,debug)
 Q += len(P) + 1 # Due to having to fill up the processors first.
 assert qval>S, "No solution." # Since findQ assumes sorted, we check that the logic does produce a qval that does surpass or match S. Else there is no answer and we return no solution. 
 if step_by_step: print("Step #3 Starting depth Q ({Q}) found.".format(Q=Q))
-discovered, nope = searcher.iterative(start_state, D, S, Q, T, P, debug)
-discovered_dict = {}
-parent = start_node
-children = {}
-for state in discovered:
-    discovered_dict[state[9]] = state
-    print(state[9],state)
-    if state[7] in children:
-        children[state[7]].append(state[9])
-    else: 
-        children[state[7]] = []
-        children[state[7]].append(state[9])
-for child in children:
-    print(child, children[child])
-for child in children:
-    nodify(discovered_dict,children,child,parent)
+discovered, childrenOf = searcher.iterative(start_state, D, S, Q, T, P, debug)
+for parent in childrenOf:
+    print(parent, childrenOf[parent])
+discovered.insert(0, start_state)
+for discovered_state in discovered:
+    print(discovered_state[9], discovered_state)
+nodify(discovered, childrenOf, 0, start_node)
 printNodeTree(start_node)

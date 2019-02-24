@@ -56,7 +56,6 @@ def shouldGenerate(target_state, D, S, max_depth, debug):
         return True
 def generateChildren(generateList: list, max_depth, D, S, T, P, startInd, debug):
     states_generated = []
-    children = {}
     while len(generateList)>0:
         target_state = generateList[0]
         assert states.check_state(target_state,T,P,debug)==True, "This state is not valid: "+str(target_state)
@@ -72,16 +71,19 @@ def generateChildren(generateList: list, max_depth, D, S, T, P, startInd, debug)
             for new_state in new_states:
                 generateList.insert(0, new_state)
                 states_generated.append(new_state)
-                if target_state[9] not in children:
-                    children[target_state[9]]=[]
-                else:
-                    children[target_state[9]].append(new_state[9]) 
-    return states_generated, children
+    return states_generated
              
 def iterative(root, D, S, Q, T, P, debug):
     '''
     '''
     generateList = [root]
     if debug: print('Discovering children...')
-    full_tree, children = generateChildren(generateList, Q, D, S, T, P, 0, debug)
-    return full_tree, children
+    full_tree = generateChildren(generateList, Q, D, S, T, P, 0, debug)
+    childrenOf = {}
+    for state in full_tree:
+        if state[7] in childrenOf: # If the parent is already in the dictionary...
+            childrenOf[state[7]].append(state[9]) # ...Add this node to its children list. 
+        else: 
+            childrenOf[state[7]] = [] # Else do the same thing but first initialize the array. 
+            childrenOf[state[7]].append(state[9]) # Add this node to its children list. 
+    return full_tree, childrenOf
