@@ -1,4 +1,6 @@
-import anytree as at, math, re, sys
+import math, re, sys
+step_by_step = False # Prints steps to assure correct control flow.
+debug = False # Verbose output for testing stages. 
 tasks_T = []
 processors_P = []
 timeLimit_D = 0
@@ -36,16 +38,24 @@ def parseInput(input):
             hasContent = re.search(r'[0-9]+', line) 
             if hasContent != None: # If the line had any numbers...
                 i+=1 # Increment per new line to populate correctly.
-    print("Step #1 Input ingested.")
+    if step_by_step: print("Step #1 Input ingested.")
 def please():
         print("Please supply a valid path to the input file. Check name and path of file.")
 def ingest_input(argv):
+    global step_by_step
+    global debug
     if len(argv) > 1:
         path = argv[1] # The 1st option (after this containing file) in cmd should be path to plaintext input.
         valid = re.search(r"^(\/?[&\+\"\'\.a-zA-Z0-9_-]+\/?)+$", path) # Make sure it is a valid path string.
         if valid != None:
+            if len(argv)>2:
+                if argv[2] == '--sbs':
+                    step_by_step = True
+                if len(argv)>3:
+                    if argv[3] == '--verbose':
+                        debug = True
             parseInput(path)
         else:
-            please()
+            please() 
     else:
         please()
