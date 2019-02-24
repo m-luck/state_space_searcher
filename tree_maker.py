@@ -113,7 +113,7 @@ def generateChildren():
                         permutation_tasks.append(item)
                     permutation_tasks.append(save_waitlist)
                     permutation_tasks = str(permutation_tasks)
-                    # print(permutation_tasks)
+                    # (permutation_tasks)
                     if permutation_tasks not in seenPermutations:
                         ind += 1 # Iterate the index so each node has a unique index
                         new_node = Node(name=ind, value=save_state, parent=parent) # The new node has name: unique ind, value: whole state above, parent: the node we're permuting on

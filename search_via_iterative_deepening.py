@@ -48,4 +48,32 @@ if step_by_step: print("Step #2 Starting state",start_state,"initialized.")
 Q, qval = searcher.findQ(T,S,debug)
 assert qval>S, "No solution." # Since findQ assumes sorted, we check that the logic does produce a qval that does surpass or match S. Else there is no answer and we return no solution. 
 if step_by_step: print("Step #3 Starting depth Q ({Q}) found.".format(Q=Q))
-searcher.iterative(start_state, D, S, Q, T, P, debug)
+discovered_tree = searcher.iterative(start_state, D, S, Q, T, P, debug)
+while len(discovered_tree)>0:
+    state = discovered_tree[0]
+    del discovered_tree[0]
+    if state[9] == 0:
+        if debug: print('This is the root.')
+    elif state[7] == 0:
+        new = tree.Node(name=state[9], value=state, parent=start_node)
+        parent = new
+    else:
+        tree.Node(name=state[9], value=state, parent=parent)
+        
+
+for pre, fill, node in tree.RenderTree(start_node):
+    print("{pre}ID:{id} Parent:{parent} Depth: {depth} Time: {start}\n\
+    {pre} RunningT: {task_run}\n\
+    {pre} RunningP: {proc_run}\n\
+    {pre} Waitlist: {waitlist}\n\
+    {pre} Procs Avail: {proc_avail}".format(pre=pre, id=node.name, parent=node.parent, 
+        waitlist=node.value[0],
+        task_run=node.value[1],
+        proc_run=node.value[2],
+        task_done=node.value[3],
+        proc_avail=node.value[4],
+        start=node.value[5],
+        depth=node.value[6],
+        stateparent=node.value[7],
+        children=node.value[8],
+        stateid=node.value[9]))
