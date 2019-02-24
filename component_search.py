@@ -19,32 +19,33 @@ def findQ(tasks: list, S: int, debug: bool) -> int:
             break  
     return(Qcount, Qthresh)
 def isGoal(target_state: list, D, S, debug):
-    if target_state[5]<D and target_state[6] >= S:
+    if target_state[5]<D and states.getValue(target_state, debug) >= S:
+        if debug: print("I found a goal state!")
         return True
     else:
         return False
 def timeUp(time, D, debug):
     res = False
     if  (time >= D):
-        if debug: print('Times up!')
+        if debug: print('Times up!',time,"passed",D)
         res = True
     return res
 def maxDepthReached(depth,max_depth, debug):
     res = False
     if (depth >= max_depth):
-        if debug: print('Max depth reached.')
+        if debug: print('Max depth reached!',depth,"passed",max_depth)
         res = True
     return res
 def emptyRunList(target_state, debug):
     res = False
     if len(target_state[1])==0:
-        if debug: print('Empty runlist.')
+        if debug: print('Empty runlist!')
         res = True
     return res
 def emptyWaitList(target_state, debug):
     res = False
     if len(target_state[0])==0:
-        if debug: print('Empty waitlist.')
+        if debug: print('Empty waitlist!')
         res = True
     return res
 def shouldGenerate(target_state, D, S, max_depth, debug):
@@ -62,7 +63,7 @@ def generateChildren(generateList: list, max_depth, D, S, T, P, startInd, debug)
         del generateList[0]
         if shouldGenerate(target_state, D, S, max_depth, debug):
             if states.earliestFinish(target_state, P, debug) == -1:
-                time = target_state[6]
+                time = target_state[5]
                 freeProc = -1
                 freeTask = -1
             else:
@@ -71,6 +72,8 @@ def generateChildren(generateList: list, max_depth, D, S, T, P, startInd, debug)
             for new_state in new_states:
                 generateList.insert(0, new_state)
                 states_generated.append(new_state)
+        else:
+            if debug: print("Not generating........")
     return states_generated
              
 def iterative(root, D, S, Q, T, P, debug):

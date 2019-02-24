@@ -8,10 +8,11 @@ def printNodeTree(start_node):
         print("{pre}ID:{id} Parent:{stateparent} Depth: {depth} Time: {start}\n\
         {pre} RunningT: {task_run}\n\
         {pre} RunningP: {proc_run}\n\
+        {pre} End time: {ends}\n\
         {pre} Waitlist: {waitlist}\n\
         {pre} Procs Avail: {proc_avail}\n\
         {pre} Tasks Done: {task_done}\n\
-        {pre} Children: {children}\n".format(pre=pre, id=node.name, parent=node.parent, 
+        {pre} Value: {val}\n".format(pre=pre, id=node.name, parent=node.parent, 
             waitlist=node.value[0],
             task_run=node.value[1],
             proc_run=node.value[2],
@@ -20,7 +21,8 @@ def printNodeTree(start_node):
             start=node.value[5],
             depth=node.value[6],
             stateparent=node.value[7],
-            children=node.value[8],
+            val=states.getValue(node.value, debug),
+            ends=node.value[10],
             stateid=node.value[9]))
 def nodify(states, childrenOf, parent_id, parent_obj):
     for child_id in childrenOf[parent_id]:
@@ -56,6 +58,7 @@ abs_depth = 0
 parent = -1
 children = []
 node_idx = 0 # Will iterate for IDs on new tree nodes. 
+endTimes = []
 start_state = [
     [*task_waitlist],#0
     [*task_runlist],#1
@@ -66,14 +69,15 @@ start_state = [
     abs_depth, #6
     parent, #7
     [*children], #8 
-    node_idx #9
+    node_idx, #9
+    [*endTimes] # 10. End time of running process.
     ] # A state includes a waitlist, runlist, and a done-list. The runlist is split into tasks running with their corresponding processors.
 assert states.check_state(start_state,T,P,debug) == True, "State is invalid." # Checks if the state is valid.
 start_node = tree.Node(name=node_idx,value=[*start_state])
 if step_by_step: print("Step #2 Starting state",start_state,"initialized.")
 # OPERATE =============================================
 Q, qval = searcher.findQ(T,S,debug)
-Q += len(P) + 1 # Due to having to fill up the processors first.
+Q += len(P) + Q # Due to having to fill up the processors first.
 assert qval>S, "No solution." # Since findQ assumes sorted, we check that the logic does produce a qval that does surpass or match S. Else there is no answer and we return no solution. 
 if step_by_step: print("Step #3 Starting depth Q ({Q}) found.".format(Q=Q))
 discovered, childrenOf = searcher.iterative(start_state, D, S, Q, T, P, debug)

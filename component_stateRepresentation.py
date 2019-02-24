@@ -52,16 +52,11 @@ def earliestFinish(st,P,debug):
     Takes a state and if it has any tasks in its runlist, find the earliest finishing task and return the index of the free processor and task. 
     If there is an empty runlist, return -1.
     '''
-    finish_times = []
     processors = []
     tasks = []
-    for i in range(0,len(st[2])):
-        finish_time = float(st[1][i])/st[2][i]
-        if debug: print("Adding",finish_time,"to finish_times.")
-        finish_times.append(finish_time)
-        processors.append(st[2][i])
-        tasks.append(st[1][i])
-    if len(finish_times) < len(P):
+    waitlist = st[0]
+    finish_times = st[10]
+    if len(finish_times) < len(P) and len(waitlist)>0:
         if debug: print("Still need to fill up our processors.")
         return -1
     earliest = min(finish_times)
@@ -81,7 +76,7 @@ def getValue(st,debug):
     Returns the sum of done task lengths.
     '''
     total = 0
-    for task in st[4]:
+    for task in st[3]:
         total+=task
     return total
 def printState(st):
