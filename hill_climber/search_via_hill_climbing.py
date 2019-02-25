@@ -41,7 +41,7 @@ for i in range(0,restart_count):
         best_score = score
     seen = op.markSeen(state, seen, db)
     climb_done = False
-    new_state = state
+    new_state = state.copy()
     while climb_done == False:
         new_state = op.climb(new_state, Q, *conditions, seen, db) 
         score =  states.loss(new_state,*conditions,db)

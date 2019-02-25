@@ -46,10 +46,10 @@ def changeAssignment(state,Q,conditions,seen,db):
             zero_count += 1
     new_state_seen = True
     task_id = 0
-    best_neighbor = state
+    best_neighbor = state.copy()
     best_score = states.loss(state,*conditions,db)
     while new_state_seen == True or task_id < len(state):
-        curr_state = state
+        curr_state = state.copy()
         if zero_count >= max_zero_count:
             assignment = random.randint(1,choice_count-1)
         else:
@@ -69,7 +69,7 @@ def changeAssignment(state,Q,conditions,seen,db):
             task_id+=1
         score = states.loss(curr_state,*conditions,db)
         if score < best_score:
-            best_neighbor = curr_state
+            best_neighbor = curr_state.copy()
             best_score = score 
     return best_neighbor
 def swapAssignments(state,seen,conditions,db):
@@ -79,7 +79,7 @@ def swapAssignments(state,seen,conditions,db):
     best_neighbor = state
     best_score = states.loss(state,*conditions,db)
     while new_state_seen == True and task_id < len(state):
-        curr_state = state
+        curr_state = state.copy()
         assignment = random.randint(1,choice_count-1)
         for i in range(1,choice_count):
             if assignment == i:
@@ -94,7 +94,7 @@ def swapAssignments(state,seen,conditions,db):
             task_id+=1
         score = states.loss(curr_state,*conditions,db)
         if score < best_score:
-            best_neighbor = curr_state
+            best_neighbor = curr_state.copy()
             best_score = score 
     if db: print("\tClimbing to", best_neighbor)
     return best_neighbor
