@@ -10,13 +10,15 @@ Thank you for taking time to read.
 The code is written in Python 3.
 All source code is united under one intended virtual environment already prepared. The environment should be installed with
 
-    pipenv install 
+    python3 -m pipenv install 
 and started with 
 
-    pipenv shell
+    python3 -m pipenv shell
 
 (https://pipenv.readthedocs.io/en/latest/)
-Courant machines are compatible with these virtual environments. 
+Courant machines are compatible with these virtual environments. If pipenv is not yet installed on the user, run
+    
+    python3 -m pip install --user pipenv
 However, in the lack of pipenv compatibility, the packages intended to be installed are listed in the file 'Pipfile'.
 
 Each command has an optional step-by-step rundown, appending 
@@ -29,13 +31,13 @@ For a very detailed and verbose rundown, append
 
 # To run iterative deepener:
     cd 1_iterative_deepener
-    python search_via_iterative_deepening [formatted_file] (--sbs --verbose)
+    python3 search_via_iterative_deepening [formatted_file] (--sbs --verbose)
 
 # To run hill climber:
     cd 2_hill_climber
-    python search_via_hill_climbing [formatted_file] (--sbs --verbse)
+    python3 search_via_hill_climbing [formatted_file] (--sbs --verbse)
 
 By default, these will both print the intended processor assignment in order of tasks in the file, or 'No solution.' if a goal was not found while running. 
 
 ###### If something doesn't work, simply email mll469@nyu.edu.
-###### Thank you! Michael Lukiman
+###### Thank you! Michael Lukiman, February 2019
