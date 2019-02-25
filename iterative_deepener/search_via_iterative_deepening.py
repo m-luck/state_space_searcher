@@ -151,7 +151,10 @@ if goal != -1:
     for task in tasks_unfinished: # We want to make them assigned to no processor since they do not need to be run.
         pairings[T_sortedToNot[task]] = 0 # This task is not pertinent, so assign it to processor "0", i.e. none.
     answer_string = []
-    for i in range(0,len(T)):
+    for i in range(0,len(T)): # This is due to a test case where only N<len(P) task needs to run, hence the other tasks never run.
+        if i+1 not in pairings: # If this task ID is not in pairings, then the task need not be run, i.e. processor 0.
+            pairings[i+1]=0
+    for i in range(0, len(T)):
         answer_string.append(str(pairings[i+1])) # Format it as 'X X X X...', i.e. processor ID per each task
     answer_string =' '.join(answer_string)
     print(answer_string)
