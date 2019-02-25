@@ -14,13 +14,17 @@ All source code is united under one intended virtual environment already prepare
 and started with 
 
     pipenv shell
+
+(https://pipenv.readthedocs.io/en/latest/)
 Courant machines are compatible with these virtual environments. 
 However, in the lack of pipenv compatibility, the packages intended to be installed are listed in the file 'Pipfile'.
 
 Each command has an optional step-by-step rundown, appending 
+ 
     --sbs 
 (step-by-step) as an option after the file input.
 For a very detailed and verbose rundown, append 
+
     --sbs --verbose
 
 # To run iterative deepener:
