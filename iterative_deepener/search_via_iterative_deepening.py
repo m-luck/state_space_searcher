@@ -49,7 +49,7 @@ D = -1
 S = -1
 ingester.ingest_input(sys.argv) # Processes the inputs. 
 step_by_step = ingester.step_by_step # Step by step == true will print a concise log of what the program is doing. 
-debug = ingester.debug # Debug == true will print out a detailed log of what the program is doing.
+debug = ingester.debug # Debug == true will print out a very detailed log of what the program is doing.
 T = ingester.tasks_T
 P = ingester.processors_P
 D = ingester.timeLimit_D
@@ -59,7 +59,7 @@ origP = [*P] # Same motive as above.
 # Further deconstruct the tasks/processors into their value dictionaries and their labels (T1, T2, etc).
 T_lengths = {}
 P_speeds = {}
-# While not in the example, this program acknowledges that some situations may have tasks of equal length and processors of equal speed. To make sense, each needs to be tracked via index.
+# This program acknowledges that some situations may have tasks of equal length and processors of equal speed. To make sense, each needs to be tracked via index.
 T_inds = []
 P_inds = []
 # Moreover, since we will sort the tasks and processors, we also need to keep a relationship between sorted and unsorted.
