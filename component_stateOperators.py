@@ -1,5 +1,5 @@
 import component_stateRepresentation as states
-def updateState(st,earlTime,earlProc_idx,earlTask_idx,parent,startInd, debug)->list:
+def updateState(st,earlTime,earlProc_idx,earlTask_idx,parent,startInd, t_lengths, p_speeds, debug)->list:
     # Should be 7 updates, one for each list + one time + one depth in a state.
     # 1. Waitlist update
     children = []
@@ -17,7 +17,7 @@ def updateState(st,earlTime,earlProc_idx,earlTask_idx,parent,startInd, debug)->l
         waitlist.remove(waitlist[i])
         if debug: print("Readied next task from waitlist.")
         # 5. Done task update.
-        print(task_run, earlTask_idx)
+        if debug: print(task_run, earlTask_idx)
         if earlProc_idx != -1 and earlTask_idx != -1:
             done.append(task_run[earlTask_idx])
             avail.append(proc_run[earlProc_idx])
@@ -33,7 +33,7 @@ def updateState(st,earlTime,earlProc_idx,earlTask_idx,parent,startInd, debug)->l
         proc_run.append(avail[0])
         if debug: print("Assigned proc speed",avail[0],"to that task.")
         # 4. Available processor update.
-        endTimes.append(earlTime+float(task_run[-1])/proc_run[-1])
+        endTimes.append(earlTime+float(t_lengths[task_run[-1]])/p_speeds[proc_run[-1]])
         if debug: print("Removing", avail[0])
         del avail[0]
         # 6. Update time.
@@ -44,7 +44,7 @@ def updateState(st,earlTime,earlProc_idx,earlTask_idx,parent,startInd, debug)->l
             print("Parent is", parent)
         state = [[*waitlist],[*task_run],[*proc_run],[*done],[*avail], earlTime, abs_depth+1, parent, [], startInd, [*endTimes]] # The spanking new state! It's deterministic!
         children.append(state)
-    if len(st[0])==0:
+    if len(st[0])==0: # If the waitlist is empty, then the update become just popping off finished jobs...
         startInd+=1
         waitlist=[*st[0]]
         task_run=[*st[1]]
@@ -73,5 +73,4 @@ def updateState(st,earlTime,earlProc_idx,earlTask_idx,parent,startInd, debug)->l
             print("Parent is", parent)
         state = [[*waitlist],[*task_run],[*proc_run],[*done],[*avail], earlTime, abs_depth+1, parent, [], startInd, [*endTimes]] # The spanking new state! It's deterministic!
         children.append(state)
-
     return children, startInd

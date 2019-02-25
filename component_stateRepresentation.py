@@ -71,15 +71,15 @@ def earliestFinish(st,P,debug):
     assert earliestTask_idx!=-1, "!! Problem with earliest finish."
     if debug: print("Returning earliest values.")
     return (earliest, earliestProcessor_idx, earliestTask_idx)
-def getValue(st,debug):
+def getValue(st,t_lengths,debug):
     '''
     Returns the sum of done task lengths.
     '''
     total = 0
     for task in st[3]:
-        total+=task
+        total+=t_lengths[task]
     return total
-def printState(st):
+def printState(st, t_lengths, debug):
     print('Waitlist:',st[0])
     print('Running tasks:',st[1])
     print('Running processors:',st[2])
@@ -88,6 +88,6 @@ def printState(st):
     print('Start Time:',st[5])
     print('Absolute Depth:',st[6])
     print('Parent:',st[7])
-    print('Children:',st[8])
+    print('Value:',getValue(st, t_lengths, debug))
     print('Unique ID:',st[9])
     
