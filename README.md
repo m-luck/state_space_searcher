@@ -8,17 +8,20 @@ Thank you for taking time to read.
 
 # Setting up the environment:
 The code is written in Python 3.
-All source code is united under one intended virtual environment already prepared. The environment should be installed with
+All source code is united under one intended virtual environment already prepared. If pipenv is not yet installed on the user, run
+    
+    python3 -m pip install --user pipenv
+
+The environment should be installed with
 
     python3 -m pipenv install 
+
 and started with 
 
     python3 -m pipenv shell
 
 (https://pipenv.readthedocs.io/en/latest/)
-Courant machines are compatible with these virtual environments. If pipenv is not yet installed on the user, run
-    
-    python3 -m pip install --user pipenv
+Courant machines are compatible and have been tested with the source code. 
 However, in the lack of pipenv compatibility, the packages intended to be installed are listed in the file 'Pipfile'.
 
 Each command has an optional step-by-step rundown, appending 
