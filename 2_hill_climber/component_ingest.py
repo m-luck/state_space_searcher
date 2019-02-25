@@ -6,6 +6,9 @@ processors_P = []
 timeLimit_D = 0
 target_S = -math.inf
 def parseInput(input):
+    '''
+    Does an unnecessarily thorough check for good practice.
+    '''
     global tasks_T
     global processors_P
     global timeLimit_D

@@ -7,6 +7,9 @@ def create_empty_state(T,db):
         state[i+1] = 0
     return state
 def random_state(T,P,Q,db):
+    '''
+    Generates a random state.
+    '''
     state = {}
     max_zero_count = len(T) - Q 
     zero_count = 0
@@ -27,7 +30,8 @@ def random_state(T,P,Q,db):
     return state
 def loss(state, T, P, D, S, db):
     '''
-    "The cost function is (the shortfall on the value) + (the overflow on the time).""
+    "The cost function is (the shortfall on the value) + (the overflow on the time)." 
+    We have weighted these with heuristics below.
     '''
     if db: print("------")
     value = 0
@@ -40,17 +44,24 @@ def loss(state, T, P, D, S, db):
             value += 0
         else:
             runtime = T[task_id] / float(P[processor_id]) # Length divided by assigned speed.   
-            elapsed[processor_id+1] += runtime
+            elapsed[processor_id+1] += runtime # Keep track of elapsed time per processor.
             value += float(T[task_id])
     latest_finish = 0
     for processor in elapsed:
         finish = elapsed[processor]
         if finish > latest_finish:
-            latest_finish = finish
+            latest_finish = finish # This is the longest elapsed time of all the processors, hence our bottleneck.
     shortfall = S - value
     overflow = latest_finish - D
-    if shortfall <= 0 and overflow < 0: # Respect winners.
-        shortfall *= 100
-        overflow *= 100
+    if overflow < 0: # Respect winners.
+        if shortfall <= 0:
+            shortfall *= int(shortfall*S)*int(-overflow*D) # Weighted in proportion to target value and time limit. An answer will be supremely good.
+            overflow *= int(shortfall*S)*int(-overflow*D)
+    else:
+        overflow *= int(D*overflow) # Weighted in proportion to time limit. High penalty.
+        if shortfall > 0:
+            shortfall *= shortfall
+    # We will keep at these general heuristics, else we might overfit. 
+
     if db: print("\tValue Shortfall:",shortfall,"| Time Overflow:",overflow)
     return shortfall+overflow

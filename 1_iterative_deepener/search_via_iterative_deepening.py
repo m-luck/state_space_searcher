@@ -66,7 +66,7 @@ P_inds = []
 T_sortedToNot = {}
 P_sortedToNot = {}
 T,P,D,S = states.sort_heuristically(T, P, D, S,debug) # Largest to smallest. 
-for proc in range(0, len(P)):
+for proc in range(0, len(P)): # Fill out the dictionaries.
     P_speeds[proc+1] = P[proc]
     for origProcSpeedInd in range(0,len(origP)):
         if origP[origProcSpeedInd] == P_speeds[proc+1]:
@@ -92,17 +92,17 @@ children = []
 node_idx = 0 # Will iterate for IDs on new tree nodes. 
 endTimes = []
 start_state = [
-    [*task_waitlist],#0
-    [*task_runlist],#1
-    [*proc_runlist],#2
-    [*tasks_completed],#3
-    [*avail_procs],#4
-    startTime, #5
-    abs_depth, #6
-    parent, #7
-    [*children], #8 
-    node_idx, #9
-    [*endTimes] # 10. 
+    [*task_waitlist],#0 Waitlist
+    [*task_runlist],#1 Runlist of tasks
+    [*proc_runlist],#2 Runlist of processors.
+    [*tasks_completed],#3 Finished list of tasks.
+    [*avail_procs],#4 Available processors.
+    startTime, #5 Time of state.
+    abs_depth, #6 Depth of state in full tree.
+    parent, #7 Parent of state.
+    [*children], #8 Children of state.
+    node_idx, #9 ID of state.
+    [*endTimes] # 10. Finish times of runlist. 
     ] # A state includes a waitlist, runlist, and a done-list. The runlist is split into tasks running with their corresponding processors, and absolute end times.
 assert states.check_state(start_state,T,P,debug) == True, "State is invalid." # Checks if the state is valid.
 start_node = tree.Node(name=node_idx,value=[*start_state])
@@ -110,7 +110,7 @@ if step_by_step: print("Step #2 Starting state",start_state,"initialized.")
 
 # OPERATE =============================================
 Q, qval = searcher.findQ(T,S,debug) # Find our Q, the reasonable starting value to even have hope of an answer.
-Q += len(P) # Due to having to fill up the processors first, which takes initial depth of len(P) depth for loop invariance.
+Q += len(P) # Due to having to fill up the processors first, which takes initial depth of len(P) depth for loop invariance in this modeling of a solution.
 assert qval>S, "No solution." # Since findQ assumes sorted, we check that the logic does produce a qval that does surpass or match S. Else there is no answer and we return no solution. 
 if step_by_step: print("Step #3 Starting depth Q ({QP}, really {Q}) found.".format(Q=Q, QP=Q-len(P)))
 goal = -1 # Goal will change from -1 if found.
@@ -149,9 +149,9 @@ if goal != -1:
     answer_id = leafToRootPath[-1] 
     tasks_unfinished = discovered[answer_id][1] # The tasks still running in the goal state.
     for task in tasks_unfinished: # We want to make them assigned to no processor since they do not need to be run.
-        pairings[T_sortedToNot[task]] = 0 # This task is not pertinent, so assign it to processor "0", i.e. none.
+        pairings[T_sortedToNot[task]] = 0 # The task is not pertinent, so assign it to processor "0", i.e. none.
     answer_string = []
-    for i in range(0,len(T)): # This is due to a test case where only N<len(P) task needs to run, hence the other tasks never run.
+    for i in range(0,len(T)): # This is due to a test case where only N<len(P) task needs to run, hence the other tasks are not even in the runlist like above.
         if i+1 not in pairings: # If this task ID is not in pairings, then the task need not be run, i.e. processor 0.
             pairings[i+1]=0
     for i in range(0, len(T)):
