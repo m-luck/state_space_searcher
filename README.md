@@ -3,15 +3,17 @@ Welcome to mll469's state space searcher project for Ernest Davis' Artificial In
 Thank you for taking time to read. 
 
 ## There are three folders, two of which should be relevant:
-    * 1_iterative_deepener: This is the iterative deepening source code.
-    * 2_hill_climber: This is the hill climbing source code. 
+* 1_iterative_deepener: This is the iterative deepening source code.
+* 2_hill_climber: This is the hill climbing source code. 
 
 # Setting up the environment:
 The code is written in Python 3.
-All source code is united under one intended virtual environment already prepared. The environment should be installed with 
->pipenv install 
+All source code is united under one intended virtual environment already prepared. The environment should be installed with
+
+    pipenv install 
 and started with 
->pipenv shell
+
+    pipenv shell
 Courant machines are compatible with these virtual environments. 
 However, in the lack of pipenv compatibility, the packages intended to be installed are listed in the file 'Pipfile'.
 
