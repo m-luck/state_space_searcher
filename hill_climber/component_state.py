@@ -25,18 +25,32 @@ def random_state(T,P,Q,db):
                     state[task_id+1] = assignment
         assert task_id+1 in state, "This state should be assigned to by now." 
     return state
-def score(state, T, P, D, S, db):
+def loss(state, T, P, D, S, db):
+    '''
+    "The cost function is (the shortfall on the value) + (the overflow on the time).""
+    '''
+    if db: print("------")
     value = 0
-    elapsed = 0
+    elapsed = {}
+    for processor_id in range(0,len(P)):
+        elapsed[processor_id+1] = 0
     for task_id in range(0,len(T)):
+        processor_id = state[task_id+1]-1
         if state[task_id+1] == 0:
             value += 0
-            elapsed += 0
         else:
-            processor_id = state[task_id+1]-1
-            elapsed += T[task_id] / float(P[processor_id]) # Length divided by assigned speed.   
+            runtime = T[task_id] / float(P[processor_id]) # Length divided by assigned speed.   
+            elapsed[processor_id+1] += runtime
             value += float(T[task_id])
+    latest_finish = 0
+    for processor in elapsed:
+        finish = elapsed[processor]
+        if finish > latest_finish:
+            latest_finish = finish
     shortfall = S - value
-    overflow = elapsed - D 
+    overflow = latest_finish - D
+    if shortfall <= 0 and overflow < 0: # Respect winners.
+        shortfall *= 100
+        overflow *= 100
     if db: print("\tValue Shortfall:",shortfall,"| Time Overflow:",overflow)
     return shortfall+overflow

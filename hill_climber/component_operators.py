@@ -1,3 +1,5 @@
+import random
+import component_state as states
 # "The operators on a state are either to change the assignment of one tasks, or to swap the
 # assignment of two tasks."
 # "For instance, one neighbor of the above state would be
@@ -32,19 +34,21 @@ def alreadySeen(state,seen,db):
         return True
     else:
         return False  
-def changeAssignment(state,P,Q,seen,db):
+def changeAssignment(state,Q,conditions,seen,db):
     '''
     Iterates through tasks and assigns a random processor. Only accepts as neighbor if not already seen.
     '''
     zero_count = 0 
     max_zero_count = len(state) - Q
-    choice_count = len(state)+1
+    choice_count = len(conditions[1])+1
     for task_id in range(0,len(state)):
         if state[task_id+1]==0:
             zero_count += 1
     new_state_seen = True
-    task_id = 1
-    while new_state_seen == True and task_id <= len(state):
+    task_id = 0
+    best_neighbor = state
+    best_score = states.loss(state,*conditions,db)
+    while new_state_seen == True or task_id < len(state):
         curr_state = state
         if zero_count >= max_zero_count:
             assignment = random.randint(1,choice_count-1)
@@ -59,15 +63,22 @@ def changeAssignment(state,P,Q,seen,db):
                     curr_state[task_id+1] = assignment
         assert task_id+1 in curr_state, "This state should be assigned to by now."
         if not alreadySeen(curr_state,seen,db):
-            seen = markSeen(state,seen,db)
             new_state_seen = False
-        task_id += 1
-    return curr_state
-def swapAssignments(state,seen,db):
-    choice_count = len(state) + 1
+            seen = markSeen(curr_state,seen,db)
+        else:
+            task_id+=1
+        score = states.loss(curr_state,*conditions,db)
+        if score < best_score:
+            best_neighbor = curr_state
+            best_score = score 
+    return best_neighbor
+def swapAssignments(state,seen,conditions,db):
+    choice_count = len(conditions[1]) + 1
     new_state_seen = True
-    task_id = 1
-    while new_state_seen == True and task_id <= len(state):
+    task_id = 0
+    best_neighbor = state
+    best_score = states.loss(state,*conditions,db)
+    while new_state_seen == True and task_id < len(state):
         curr_state = state
         assignment = random.randint(1,choice_count-1)
         for i in range(1,choice_count):
@@ -77,9 +88,18 @@ def swapAssignments(state,seen,db):
                 state[i] = key
         assert task_id+1 in state and assignment in state, "These states should be assigned to by now."
         if not alreadySeen(state,seen,db):
-            seen = markSeen(state,seen,db)
             new_state_seen = False
-    return curr_state
+            seen = markSeen(curr_state,seen,db)
+        else:
+            task_id+=1
+        score = states.loss(curr_state,*conditions,db)
+        if score < best_score:
+            best_neighbor = curr_state
+            best_score = score 
+    if db: print("\tClimbing to", best_neighbor)
+    return best_neighbor
 def climb(start_state, Q, T, P, D, S, seen, db):
-    swapAssignments(start_state,seen,db)
+    # result = swapAssignments(start_state,seen,[T,P,D,S],db)
+    result = changeAssignment(start_state,Q,[T,P,D,S],seen,db)
+    return result
 
