@@ -38,4 +38,4 @@ For a very detailed and verbose rundown, append
 By default, these will both print the intended processor assignment in order of tasks in the file, or 'No solution.' if a goal was not found while running. 
 
 ###### If something doesn't work, simply email mll469@nyu.edu.
-###### Thank you! Michael Lukiman
+###### Thank you! Michael Lukiman, February 2019
