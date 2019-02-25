@@ -7,18 +7,18 @@ Thank you for taking time to read.
     * 2_hill_climber: This is the hill climbing source code. 
 
 # Setting up the environment:
- ##### The code is written in Python 3.
- ##### All source code is united under one intended virtual environment already prepared. The environment should be installed with 
+The code is written in Python 3.
+All source code is united under one intended virtual environment already prepared. The environment should be installed with 
     pipenv install 
- ##### and started with 
+and started with 
     pipenv shell
-##### Courant machines are compatible with these virtual environments. 
-##### However, in the lack of pipenv compatibility, the packages intended to be installed are listed in the file 'Pipfile'.
+Courant machines are compatible with these virtual environments. 
+However, in the lack of pipenv compatibility, the packages intended to be installed are listed in the file 'Pipfile'.
 
-##### Each command has an optional step-by-step rundown, appending 
+Each command has an optional step-by-step rundown, appending 
     --sbs 
-##### (step-by-step) as an option after the file input.
-##### For a very detailed and verbose rundown, append 
+(step-by-step) as an option after the file input.
+For a very detailed and verbose rundown, append 
     --sbs --verbose
 
 # To run iterative deepener:
@@ -29,7 +29,7 @@ Thank you for taking time to read.
     cd 2_hill_climber
     python search_via_hill_climbing [formatted_file] (--sbs --verbse)
 
-##### By default, these will both print the intended processor assignment in order of tasks in the file, or 'No solution.' if a goal was not found while running. 
+By default, these will both print the intended processor assignment in order of tasks in the file, or 'No solution.' if a goal was not found while running. 
 
 ###### If something doesn't work, simply email mll469@nyu.edu.
 ###### Thank you! Michael Lukiman
