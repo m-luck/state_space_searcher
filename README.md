@@ -44,5 +44,7 @@ By default, these will both print the intended processor assignment in order of 
 
 ###### If something doesn't work, simply email mll469@nyu.edu.
 ###### The directory 0_homework_draft is a running draft from the previous homework, included to show progress.
+###### This repository is tracked and any plagiarism (even access) will be monitored.
 ###### Thank you! Michael Lukiman, February 2019
+
 
